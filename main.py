@@ -1,7 +1,7 @@
 import discord
 from user_manager import User
 from colorama import init, Fore, Style
-from client_token import token
+from discord_token import token #my discord key
 
 init(autoreset=True)
 
@@ -23,33 +23,12 @@ class Cother_bot(discord.Client):
 
         if message.author == self.user:
             return
-        
-        usuario = User()
-        if usuario.exist(userid):
-            usuario.open_user(userid)            
-            print('User opened')    
-        else: 
-            usuario.new_user(userid, username)
-            usuario.save_user()
-
-        usuario.dict['xp'] += 1
-        usuario.save_user()
 
         # work only on cother-bot-test channel
         if channel == 'cother-bot-test':
-            if user_message.startswith('!stats'):
-                print(type(usuario.dict))
-                level = str(usuario.dict['level'])
-                xp = str(usuario.dict['xp'])
-                stats = f'''
-                Tu nivel es: {level}
-                Tu experiencia es: {xp}
-                '''
-                await message.reply(stats, mention_author=True)
-            print(usuario.dict)
+            pass
 
-
-        if message.content.startswith('!cother'):
+        if user_message.startswith('!cother'):
             await message.reply('Tu puta madre {}'.format(username_short), mention_author=True)
 
         # deletes all the messages on a channel
