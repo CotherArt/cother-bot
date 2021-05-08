@@ -1,8 +1,12 @@
-import json, os
+import json, os, ast
 
 class User:
 
     def __init__(self):
+        # creates the users/ directory if it not exists
+        if not 'users' in os.listdir():
+            os.mkdir('users')
+
         self.dict = {
             'userid': '',
             'name': '',
@@ -14,7 +18,6 @@ class User:
     def exist(self, userid):
         userslist = os.listdir('users/')
         return (userid+'.txt') in userslist
-
     def save_user(self):
         if self.dict['userid'] == '':
             print('User has no userid')
@@ -28,18 +31,15 @@ class User:
             print('User' + userid + ' not found')
             return
 
-        with open('users/'+userid+'.txt', 'r') as file:
-            self.dict = file.read()
+        with open('users/'+userid+'.txt') as file:
+            data = file.read()
+            
+        d = ast.literal_eval(data)
+        self.dict = d
 
     def new_user(self, userid, username):
         self.dict['userid'] = userid
         self.dict['name'] = username
-
-    def toString(self):
-        return self.dict
-
-    
-
 
 def main():
     usr = User()

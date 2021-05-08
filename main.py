@@ -24,18 +24,29 @@ class Cother_bot(discord.Client):
         if message.author == self.user:
             return
         
-        # diferent vehaviors in diferent channels
+        usuario = User()
+        if usuario.exist(userid):
+            usuario.open_user(userid)            
+            print('User opened')    
+        else: 
+            usuario.new_user(userid, username)
+            usuario.save_user()
+
+        usuario.dict['xp'] += 1
+        usuario.save_user()
+
+        # work only on cother-bot-test channel
         if channel == 'cother-bot-test':
-            print('esatan escribiendo en mi canal >:(')
-
-            usuario = User()
-            if usuario.exist(userid):
-                usuario.open_user(userid)                
-            else: 
-                usuario.new_user(userid, username)
-                usuario.save_user()
-
-            print(usuario.toString())
+            if user_message.startswith('!stats'):
+                print(type(usuario.dict))
+                level = str(usuario.dict['level'])
+                xp = str(usuario.dict['xp'])
+                stats = f'''
+                Tu nivel es: {level}
+                Tu experiencia es: {xp}
+                '''
+                await message.reply(stats, mention_author=True)
+            print(usuario.dict)
 
 
         if message.content.startswith('!cother'):
