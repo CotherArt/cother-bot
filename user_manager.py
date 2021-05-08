@@ -1,12 +1,16 @@
-import os, ast
+import os
+import ast
+import math
 from colorama import Fore, Style, init
 
 init(autoreset=True)
 debug_mode = True
 
+
 def debug(msg):
     if debug_mode:
         print(msg)
+
 
 class User:
     dict = {}
@@ -33,7 +37,7 @@ class User:
         with open('users/' + self.dict['userid'] + '.txt', 'w') as file:
             file.write(str(self.dict))
             debug(Fore.GREEN + 'User saved!')
-    
+
     # returns the dict from a user on user/ folder
     def load_user(self, userid):
         self.make_users_dir()
@@ -43,39 +47,69 @@ class User:
 
         with open('users/'+userid+'.txt') as file:
             data = file.read()
-        
+
         # converts str data to a dict type
         d = ast.literal_eval(data)
         debug(Fore.GREEN + 'User loaded from the users folder')
         return d
+    
+    
 
-    # get and set functions -----------------------------------------------
+    # getters ------------------------------------------------------------------
     def get_dic(self):
         return self.dict
+
+    def toString(self):
+        return str(self.dict)
 
     def get_username(self):
         return self.dict['username']
 
     def get_voice_level(self):
         if 'voice_level' not in self.dict.keys():
-            self.dict['voice_level'] = 0
+            self.dict['voice_level'] = 1
         return self.dict['voice_level']
-        
-    
+
     def get_text_level(self):
         if 'text_level' not in self.dict.keys():
-            self.dict['text_level'] = 0
+            self.dict['text_level'] = 1
         return self.dict['text_level']
-    
+
+    def get_text_xp(self):
+        if 'text_xp' not in self.dict.keys():
+            self.dict['text_xp'] = 0
+        return self.dict['text_xp']
+
+    def get_voice_xp(self):
+        if 'voice_xp' not in self.dict.keys():
+            self.dict['voice_xp'] = 0
+        return self.dict['voice_xp']
+
+    # setters ------------------------------------------------------------------
     def set_username(self, username):
         self.dict['username'] = username
-    
+
     def set_voice_level(self, level):
         self.dict['voice_level'] = level
 
     def set_text_level(self, level):
         self.dict['text_level'] = level
-        
+
+    def add_text_xp(self, xp):
+        self.dict['text_xp'] = self.get_text_xp() + xp
+        xp_required = 1000 * math.log(self.get_text_level(), 10)
+        print(xp_required)
+        if self.get_text_xp() >= xp_required:
+            self.set_text_level(self.get_text_level() + 1)
+            self.dict['text_xp'] -= xp_required
+            debug(Fore.GREEN + 'Level up!')
+
+
+    def set_voice_xp(self, xp):
+        self.dict['voice_xp'] = xp
+
+    # other -------------------------------------------------------------------
+
     # contructors and destructors--------------------------------------------
     # loads the user from the users/ dir if it exist, and create it if it not
     def __init__(self, userid, username):
@@ -88,10 +122,10 @@ class User:
         else:
             debug(Fore.GREEN + 'New user created!')
             self.dict = {'userid': userid, 'username': username}
-            self.save_user()
 
     def __del__(self):
         self.save_user()
+
 
 def main():
     usr = User('owouser123', 'Cother#1234')
