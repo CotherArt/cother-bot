@@ -1,7 +1,7 @@
 import discord
+from os import listdir
 from user_manager import User
 from colorama import init, Fore, Style
-from discord_token import token  # my discord key
 
 init(autoreset=True)
 debug_mode = True
@@ -54,10 +54,23 @@ class Cother_bot(discord.Client):
         if user_message.startswith('!stats'):
             await message.reply(user.toString(), mention_author=True)
 
-
+def discord_token():
+    if 'bot_key' in listdir():
+        with open('bot_key', 'r') as file:
+            debug(Fore.GREEN + 'bot_key loaded')
+            token = file.read()
+            return token
+    else:
+        debug(Fore.RED + 'bot_key not found')
+        token = input('Put the bot key here: ')
+        with open('bot_key', 'w') as file:
+            file.write(token)
+        return token
+    
+    
 def main():
     client = Cother_bot()
-    client.run(token)
+    client.run(discord_token())
 
 
 if __name__ == '__main__':
